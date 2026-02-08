@@ -92,6 +92,10 @@
             text-decoration: none;
             font-weight: 500;
             transition: 0.3s;
+            display: inline-block;
+        }
+        .action-links {
+            white-space: nowrap;
         }
         .action-links a:first-child {
             color: #ffc107;
@@ -150,7 +154,7 @@
     <div class="container-fluid py-4 px-4">
         <div class="row g-4">
             <!-- Formulaire d'ajout -->
-             {% if not request.GET.mod and request.GET.mod is None %}
+             {% if not request.GET.mod %}
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header">
@@ -247,110 +251,109 @@
                 </div>
             </div>
             {% endif %}
-            {% if request.GET.mod and request.GET.mod is not None %}
+            {% if request.GET.mod %}
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header">
-                        <h3><i class="bi bi-plus-circle"></i> Modifier une dépense</h3>
+                        <h3><i class="bi bi-pencil-square"></i> Modifier une dépense</h3>
                     </div>
                     <div class="card-body">
-                        {% for message in messages %}
-                            <div class="alert alert-danger alert-dismissible fade show alert-custom" role="alert">
-                                <i class="bi bi-exclamation-circle"></i> {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        {% if not valeur %}
+                            <div class="alert alert-warning alert-custom" role="alert">
+                                <i class="bi bi-exclamation-triangle"></i> Dépense introuvable
                             </div>
-                        {% endfor %}
-
+                            <a href="{% url 'ajouterDepense' %}" class="btn btn-secondary w-100">
+                                Retour
+                            </a>
+                        {% else %}
                         <form method="post" novalidate>
                             {% csrf_token %}
-                            
+
                             <div class="mb-3">
-                                <label class="form-label" for="nomdep">
+                                <label class="form-label" for="nomdepmod">
                                     <i class="bi bi-file-earmark-text"></i> Nom de la dépense
                                 </label>
                                 <input 
-                                    id="nomdep"
-                                    name="nomdep" 
+                                    id="nomdepmod"
+                                    name="nomdepmod" 
                                     required 
                                     class="form-control" 
                                     type="text"
-                                    placeholder="Ex: Restaurant">
+                                    value="{{ valeur.nomdep }}">
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="description">
+                                <label class="form-label" for="descriptionmod">
                                     <i class="bi bi-pencil-square"></i> Description
                                 </label>
                                 <textarea 
-                                    id="description"
-                                    name="description" 
+                                    id="descriptionmod"
+                                    name="descriptionmod" 
                                     class="form-control" 
-                                    rows="3"
-                                    placeholder="Détails supplémentaires..."></textarea>
+                                    rows="3">{{ valeur.description }}</textarea>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="idcat">
+                                <label class="form-label" for="idcatmod">
                                     <i class="bi bi-tag"></i> Catégorie
                                 </label>
-                                <select class="form-select" name="idcat" id="idcat">
+                                <select class="form-select" name="idcatmod" id="idcatmod">
                                     {% for cat in categorie %}
-                                    <option value="{{cat.idcat}}">{{cat.nomcat}}</option>
+                                    <option value="{{cat.idcat}}" {% if valeur.idcat_id == cat.idcat %}selected{% endif %}>
+                                        {{cat.nomcat}}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="montant">
+                                <label class="form-label" for="montantmod">
                                     <i class="bi bi-currency-dollar"></i> Montant
                                 </label>
                                 <input 
-                                    id="montant"
-                                    name="montant" 
+                                    id="montantmod"
+                                    name="montantmod" 
                                     required 
                                     class="form-control" 
                                     type="number"
-                                    placeholder="0.00"
-                                    step="0.01">
+                                    step="0.01"
+                                    value="{{ valeur.montant }}">
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="devise">
+                                <label class="form-label" for="devisemod">
                                     <i class="bi bi-wallet2"></i> Devise
                                 </label>
-                                <select class="form-select" name="devise" id="devise">
-                                    <option value="$">Dollars ($)</option>
-                                    <option value="Fc">Franc congolais (Fc)</option>
+                                <select class="form-select" name="devisemod" id="devisemod">
+                                    <option value="$" {% if valeur.devise == "$" %}selected{% endif %}>Dollars ($)</option>
+                                    <option value="Fc" {% if valeur.devise == "Fc" %}selected{% endif %}>Franc congolais (Fc)</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="date">
+                                <label class="form-label" for="datemod">
                                     <i class="bi bi-calendar-event"></i> Date
                                 </label>
                                 <input 
-                                    id="date"
-                                    name="date" 
+                                    id="datemod"
+                                    name="datemod" 
                                     required 
                                     class="form-control" 
-                                    type="date">
+                                    type="date"
+                                    value="{{ valeur.date|date:'Y-m-d' }}">
                             </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <button class="btn btn-enregistrer w-100 btn-lg" type="submit">
-                                        <i class="bi bi-check-circle"></i> Modifier
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <a class="btn btn-annuler w-100 btn-lg" href="?">Annuler</a>
-                                </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-enregistrer btn-lg w-100" type="submit">
+                                    <i class="bi bi-check-circle"></i> Modifier
+                                </button>
+                                <a class="btn btn-outline-secondary w-100" href="{% url 'ajouterDepense' %}">Annuler</a>
                             </div>
-
                         </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            {%endif %}
+            {% endif %}
 
             <!-- Liste des dépenses -->
             <div class="col-lg-7">
@@ -378,9 +381,9 @@
                                         <td><strong>{{forloop.counter}}</strong></td>
                                         <td>{{dep.nomdep}}</td>
                                         <td>{{dep.description|truncatewords:5}}</td>
-                                        <td><span class="badge bg-info">{{dep.idcat}}</span></td>
+                                        <td><span class="badge bg-info">{{ dep.idcat.nomcat }}</span></td>
                                         <td class="montant">{{ dep.montant }} <strong>{{ dep.devise }}</strong></td>
-                                        <td>{{dep.date}}</td>
+                                        <td>{{ dep.date|date:"d/m/Y" }}</td>
                                         <td class="action-links">
                                             <a href="?mod={{dep.iddepense}}" title="Modifier">
                                                 <i class="bi bi-pencil"></i> Modifier
