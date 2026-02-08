@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Dépense Mensuel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .signup-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .signup-container h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-signup {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 10px;
+            font-weight: 600;
+            width: 100%;
+        }
+        .btn-signup:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .login-link p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>📝 Inscription</h2>
+        
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="matricule" class="form-label">Matricule</label>
+                <input 
+                    class="form-control form-control-lg" 
+                    id="matricule"
+                    type="text" 
+                    name="matricule" 
+                    placeholder="Entrez votre matricule"
+                    autocomplete="off"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom</label>
+                <input 
+                    class="form-control form-control-lg" 
+                    id="nom"
+                    type="text" 
+                    name="nom" 
+                    placeholder="Entrez votre nom complet"
+                    autocomplete="off"
+                    required>
+                    
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input 
+                    class="form-control form-control-lg" 
+                    id="password"
+                    type="password" 
+                    name="password" 
+                    placeholder="Créez un mot de passe sécurisé"
+                    autocomplete="off"
+                    required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-signup btn-lg">S'inscrire</button>
+        </form>
+
+        <div class="login-link">
+            <p>Déjà inscrit ?</p>
+            <a href="{% url 'connexion' %}">Se connecter</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
